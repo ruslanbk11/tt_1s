@@ -1,1 +1,1 @@
-# tt_1s
+# Corporative messenger project

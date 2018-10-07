@@ -1,13 +1,16 @@
+"""double linked list realisation"""
 class Node():
+    """node for double linked list"""
     def __init__(self, elem, prev_item, next_item):
         self.item = elem
         self.prev_item = prev_item
         self.next_item = next_item
 class DoubleLinkedList():
+    """double linked list realization"""
     head = None
     tail = None
     def push(self, elem):
-        #add element to the end
+        """add element to the end"""
         if self.head is None:
             #creating a first node in list
             self.head = self.tail = Node(elem, None, None)
@@ -16,7 +19,7 @@ class DoubleLinkedList():
             self.tail.next_item = Node(elem, self.tail, None)
             self.tail = self.tail.next_item
     def pop(self):
-        #delete element from the end
+        """delete element from the end"""
         if self.tail is None:
             #if list is empty
             return
@@ -28,7 +31,7 @@ class DoubleLinkedList():
             #if there is only one element
             self.head = self.tail = None
     def unshift(self, elem):
-        #add element to the begining
+        """add element to the begining"""
         if self.head is None:
             #creating first element in list
             self.head = self.tail = Node(elem, None, None)
@@ -38,7 +41,7 @@ class DoubleLinkedList():
             self.head.prev_item = new_node
             self.head = new_node
     def shift(self):
-        #delete element from the begining
+        """delete element from the begining"""
         if self.head is None:
             #if list is empty
             return
@@ -50,7 +53,7 @@ class DoubleLinkedList():
             #if there is only one element
             self.head = self.tail = None
     def len(self):
-        #length of list
+        """length of list"""
         count = 0
         if self.head is None:
             #if list is empty
@@ -61,7 +64,7 @@ class DoubleLinkedList():
             current = current.next_item
         return count
     def contains(self, elem):
-        #is this elem in list
+        """checking is this elem in list"""
         if self.head is None:
             #if list is empty
             return False
@@ -72,7 +75,7 @@ class DoubleLinkedList():
             current = current.next_item
         return False
     def delete(self, elem):
-        #deletes element form list
+        """deletes element form list"""
         if self.head is None:
             #if list is empty
             return
@@ -98,16 +101,17 @@ class DoubleLinkedList():
             self.tail.next_item = None
             return
     def first(self):
-        #returns first element
+        """returns first element"""
         if self.head is not None:
             return self.head.item
         return None
     def last(self):
-        #returns last element
+        """returns last element"""
         if self.tail is not None:
             return self.tail.item
         return None
     def show(self):
+        """showing list"""
         print('printing list:')
         current = self.head
         while current is not None:
@@ -115,6 +119,7 @@ class DoubleLinkedList():
             current = current.next_item
         print('end')
     def show_back(self):
+        """showing list in reverse order"""
         print('printing list:')
         current = self.tail
         while current is not None:

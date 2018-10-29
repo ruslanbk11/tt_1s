@@ -5,38 +5,38 @@ Licensed to The Apache Software Foundation, http://www.apache.org/
 Benchmarking 127.0.0.1 (be patient)
 
 
-Server Software:        gunicorn/19.9.0
+Server Software:        nginx/1.14.0
 Server Hostname:        127.0.0.1
-Server Port:            8000
+Server Port:            80
 
-Document Path:          /
-Document Length:        39 bytes
+Document Path:          /api/
+Document Length:        43 bytes
 
 Concurrency Level:      1
-Time taken for tests:   2.332 seconds
+Time taken for tests:   3.113 seconds
 Complete requests:      5000
 Failed requests:        0
-Total transferred:      855000 bytes
-HTML transferred:       195000 bytes
-Requests per second:    2144.28 [#/sec] (mean)
-Time per request:       0.466 [ms] (mean)
-Time per request:       0.466 [ms] (mean, across all concurrent requests)
-Transfer rate:          358.08 [Kbytes/sec] received
+Total transferred:      905000 bytes
+HTML transferred:       215000 bytes
+Requests per second:    1606.30 [#/sec] (mean)
+Time per request:       0.623 [ms] (mean)
+Time per request:       0.623 [ms] (mean, across all concurrent requests)
+Transfer rate:          283.93 [Kbytes/sec] received
 
 Connection Times (ms)
               min  mean[+/-sd] median   max
 Connect:        0    0   0.0      0       0
-Processing:     0    0   0.5      0       9
-Waiting:        0    0   0.3      0       7
-Total:          0    0   0.5      0       9
+Processing:     0    1   0.5      1      11
+Waiting:        0    1   0.5      1      11
+Total:          0    1   0.5      1      11
 
 Percentage of the requests served within a certain time (ms)
-  50%      0
-  66%      0
-  75%      0
-  80%      0
-  90%      0
+  50%      1
+  66%      1
+  75%      1
+  80%      1
+  90%      1
   95%      1
   98%      2
   99%      3
- 100%      9 (longest request)
+ 100%     11 (longest request)

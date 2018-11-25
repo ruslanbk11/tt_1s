@@ -1,6 +1,6 @@
 from flask import request, abort, jsonify, render_template
 import app.model as model
-from app import app
+from app import app, jsonrpc
 
 #@jsonrpc.method('api.upload_file')
 #def upload_file(b64content, filename):
@@ -14,55 +14,39 @@ from app import app
 #    print( response, dir(response))
 #    return response
 #
-@app.route('/')
-def index(name='world'):
-    return "Hello, {}!".format( name )
 
-@app.route('/form/', methods=['GET', 'POST'])
-def form():
-    if request.method == 'GET':
-        return """<html><head></head><body>
-        <form method="POST" action="/form/">
-            <input name="first_name">
-            <input name="last_name">
-            <input type="submit">
-        </form>
-        </body></html>"""
-    else:
-        rv = jsonify( request.form )
-        return rv
-        abort(404)
+@jsonrpc.method('list_chats(user_id=Number) -> Object', validate=True)
+def chats(user_id):
+    chats = model.list_chats(user_id)
+    return jsonify(chats)
 
-@app.route('/messages/')
-def messages():
-    chat_id = int(request.args.get('chat_id'))
-    if type(request.args.get('limit')) == type(str):
-        limit = int(request.args.get('limit'))
-        messages = model.list_messages_by_chat(chat_id, limit)
-    else:
-        messages = model.list_messages_by_chat(chat_id)
-    return jsonify(messages)
 
-@app.route('/search_users/', methods=['GET'])
-def search_user():    
-    word = request.args.get('word')
-    users = model.search_users(word)
+@jsonrpc.method('search_users(word=String, limit=Number) -> Object', validate=True)
+def search_users(word, limit):
+    users = model.search_users(word, limit)
     return jsonify(users)
 
-@app.route('/list_chats/', methods=['GET'])
-def list():
-    user_id = request.args.get('user_id')
-    list_of_chats = model.list_chats(user_id)
-    return jsonify(list_of_chats)
 
-@app.route('/create_pers_chat/', methods=['GET', 'POST'])
-def create_pers_chat():
-    user_id = 2
-    if request.method == 'GET':
-        return render_template('create_pers_chat.html')
-    if request.method == 'POST':
-        print(request.form)
-        companion_id = int(request.form['companion_id'])
-        rv = model.create_pers_chat(user_id, companion_id)
-        return jsonify(rv)
+@jsonrpc.method('create_pers_chat(user_id=Number, companion_id=Number) -> Object', validate=True)
+def create_pers_chat(user_id, companion_id):
     
+    rv = model.create_pers_chat(user_id, companion_id)
+    return jsonify(rv)
+
+
+@jsonrpc.method('send_message(user_id=Number, chat_id=Number, content=String) -> Object', validate=True)
+def send_message(user_id, chat_id, content):
+    rv = model.send(user_id, chat_id, content)
+    return jsonify(rv)
+
+
+@jsonrpc.method('list_messages(chat_id=Number, limit=Number) -> Object', validate=True)
+def list_messages(chat_id, limit):
+    rv = model.list_messages_by_chat(chat_id, limit)
+    return jsonify(rv)
+
+
+@jsonrpc.method('read_message(user_id=Number, message_id=Number) -> Object', validate=True)
+def read(user_id, message_id):
+    rv = model.read(user_id, message_id)
+    return jsonify(rv)

@@ -5,7 +5,7 @@ from flask_jsonrpc import JSONRPC
 
 app = Flask(__name__)
 app.config.from_object(TestingConfig)
-jsonrpc = JSONRPC( app, '/api')
+jsonrpc = JSONRPC( app, '/')
 
 #s3_session = boto3.session.Session()
 #s3_client = s3_session.client(service_name='s3',

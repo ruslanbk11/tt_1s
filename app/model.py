@@ -1,7 +1,7 @@
 import app.db as db
 import json
 
-def list_messages_by_chat(chat_id, limit = 10):
+def list_messages_by_chat(chat_id, limit):
     return db.query_all("""
             SELECT user_id, nick, name, message_id, content, added_at
             FROM messages
@@ -11,7 +11,7 @@ def list_messages_by_chat(chat_id, limit = 10):
             LIMIT %(limit)s
             """, chat_id = int(chat_id), limit = int(limit))
 
-def search_users(word, limit = 10):
+def search_users(word, limit):
     return db.query_all("""
             SELECT nick, name, avatar
             FROM users
@@ -68,4 +68,67 @@ def create_pers_chat(user_id1, user_id2):
             where chat_id = %(chat_id)s
             and is_group_chat = false
             ''', chat_id = id)
+
+def create_new_message(user_id, chat_id, content):
+    return db.create('''
+        insert into messages (user_id, content, chat_id)
+        values (%(user_id)s, %(content)s, %(chat_id)s)
+        returning message_id
+        ''', user_id = user_id, chat_id = chat_id, content = content)
+
+def send(user_id, chat_id, content):
+    last_message_id = create_new_message(user_id, chat_id, content)
+    db.insert('''
+        update chats
+        set last_message = %(content)s
+        where chat_id = %(chat_id)s
+        ''', content = content, chat_id = chat_id)
+    db.insert('''
+        update members
+        set new_messages = new_messages + 1
+        where chat_id = %(chat_id)s
+        and user_id <> %(user_id)s
+        ''', chat_id = chat_id, user_id = user_id)
+    db.insert('''
+        update chats
+        set new_messages = new_messages + 1
+        where chat_id = %(chat_id)s
+        ''', chat_id = chat_id, user_id = user_id)
+    message = {
+            'message_id': last_message_id,
+            'user_id': user_id,
+            'content': content,
+            'added_at': str(datetime.datetime.time(datetime.datetime.now())),
+            'chat_id': chat_id
+    }
+    return message
+
+def read(user_id, message_id):
+#    print(message_id)
+    target_chat = db.query_one("""
+        SELECT chat_id FROM messages
+        WHERE message_id = %(message_id)s
+        """, message_id = message_id)
+    chat_id = target_chat['chat_id']
+#    print(chat_id)
+
+    db.insert("""
+        UPDATE members
+        SET new_messages = new_messages - 1,
+        last_read_message_id = %(message_id)s
+        WHERE user_id = %(user_id)s
+        AND chat_id = %(chat_id)s
+        """, user_id = user_id, chat_id = chat_id, message_id = message_id)
+
+    db.insert("""
+        UPDATE chats
+        SET new_messages = new_messages - 1,
+        last_read_message_id = %(message_id)s
+        WHERE chat_id = %(chat_id)s
+        """, chat_id = chat_id, message_id = message_id)
+
+    return db.query_one("""
+        SELECT * FROM chats
+        WHERE chat_id = %(chat_id)s
+        """, chat_id = chat_id)
 

@@ -118,7 +118,7 @@ CREATE TABLE public.members (
     user_id integer NOT NULL,
     chat_id integer NOT NULL,
     new_messages integer NOT NULL,
-    last_read_message_id integer NOT NULL,
+    last_read_message_id integer,
     CONSTRAINT members_new_messages_check CHECK ((new_messages >= 0))
 );
 
